@@ -5,6 +5,7 @@ Working proof of the support agent made, shown through the video.
 
 So, this support agent is a n8n-based workflow, which uses three tools- Send customer email, notify ops and create ticket, hosted through a mcp server.
 Each of these carry a different function of 
+
 Send-customer-email - Takes in input in three fields, "to", "subject" and "body", normalizes it to lowercase and the if node makes sure that the input matches, and if it does it sends the mail to the customer regarding that his request has been seen and the team is working out solutions for it, IF node fails -> otherwise gives out a message invalid_input.
 
 Create-ticket - Take in input in four fields, "order_id", "category", "summary" and "priority" -> normalizes -> If -> and fills this data in a data table, if fails then gives out a message invalid_input (same as before).
