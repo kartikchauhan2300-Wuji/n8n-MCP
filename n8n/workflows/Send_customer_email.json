@@ -1,0 +1,276 @@
+{
+  "name": "Send_customer_email",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "to "
+            },
+            {
+              "name": "subject"
+            },
+            {
+              "name": "body"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "1c31e402-df67-4c7b-9f6b-01bd7b45e3ea",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "ca363472-9a02-4da0-8278-d72cdd542464",
+              "leftValue": "={{ $json.to }}",
+              "rightValue": "@example.com",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            },
+            {
+              "id": "30419e59-9930-4751-b8d6-2c0bfaf0536a",
+              "leftValue": "={{ $json.subject.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "e194c70e-e40e-4283-afcb-515b0a0dd6d0",
+              "leftValue": "={{ $json.subject.length }}",
+              "rightValue": 150,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            },
+            {
+              "id": "cf157e42-3649-4150-ba04-197a5bf43919",
+              "leftValue": "={{ $json.body.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "a060bd39-237d-4034-902c-5d05c8f7e9cf",
+              "leftValue": "={{ $json.body.length }}",
+              "rightValue": 2000,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "d94f4976-31b4-4a2d-ba18-a1933cba761b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "fromEmail": "admin@example.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "hii ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        -64
+      ],
+      "id": "591f8319-1e65-4502-b8f3-eb7db533a36d",
+      "name": "Send message and wait for response",
+      "webhookId": "1af47944-0843-4dfa-9860-820d32595981",
+      "credentials": {
+        "smtp": {
+          "id": "WHJkPKLvgD4m7k9v",
+          "name": "SMTP account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4941377c-34e7-481a-b53d-55140f7f6c6d",
+              "name": "status",
+              "value": "invalid_output",
+              "type": "string"
+            },
+            {
+              "id": "ea2188b4-32f8-46bf-b6a5-f6f1fe48cdd6",
+              "name": "message",
+              "value": "Invalid input: the recipient must be an @example.com address, and the subject and body must be non-empty and within the length limits.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        176,
+        80
+      ],
+      "id": "40178e81-8d2a-4808-babf-8f68803af370",
+      "name": "Result Invalid"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"to\": \"{{ $json.to.trim().toLowerCase() }}\",\n  \"subject\": \"{{ $json.subject.trim() }}\",\n  \"body\": \"{{ $json.body.trim() }}\"\n}",
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -208,
+        0
+      ],
+      "id": "10a01025-82d4-4e6e-840b-d689c2849448",
+      "name": "Normalization"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e2c06300-6068-4dc5-95d2-80eab1403a10",
+              "name": "data.approved",
+              "value": "The email was sent and approved",
+              "type": "string"
+            },
+            {
+              "id": "96c2fcbf-e33b-4b8c-984b-bd65c11140f8",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        400,
+        -64
+      ],
+      "id": "e6d82144-48e2-4c22-893a-5261e3efb0ba",
+      "name": "Approval status"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "to": "person@gmail.com",
+          "subject": "Your order has been shipped",
+          "body": "Your order has been delivered"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Result Invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Approval status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalization": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3508e3a4-54f1-4c86-a5e0-466f753b2aa9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c42dfe97eee1872ca00b19a8df822f25566004c5304641a07be06eece76cc7f"
+  },
+  "nodeGroups": [],
+  "id": "Hu0T8KpF0NDMk1f5",
+  "tags": []
+}
