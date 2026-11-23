@@ -1,0 +1,167 @@
+{
+  "name": "support-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "99d060bd-caaf-4905-bc7f-8aef4c119d59",
+      "name": "When chat message received",
+      "webhookId": "3e85eb31-e84c-4847-94b6-1c5b1a0e9730"
+    },
+    {
+      "parameters": {
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are a customer support assistant for an online store.\n\nRules:\n1. Use the tools to act. Never claim you did something unless a tool result confirms it.\n2. If the customer message has no order number, ask for it and call no tool.\n3. For a problem with an order, call create_ticket with category (shipping, refund, damage or other) and priority (low, medium or high).\n4. If priority is high, also call notify_ops.\n5. To email a customer, use send_customer_email. Only use an email address the customer gave you; never invent one.\n6. Call one tool at a time and read the result before the next step.\n7. If a tool returns status invalid_input or failed, say so plainly. Do not retry more than once.\n8. Never promise a refund. Refunds need human approval.\nKeep replies short.",
+          "maxIterations": 6,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        16,
+        -48
+      ],
+      "id": "15c31258-9956-4b7f-aaf9-a1cbbbf33c67",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp/be850e09-cff0-4dde-8449-f3e87cb5b6f2",
+        "serverTransport": "sse",
+        "authentication": "bearerAuth",
+        "include": "selected",
+        "includeTools": [
+          "Call_Send_customer_email_",
+          "Call_create_ticket_",
+          "Call_Send_ops_"
+        ],
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.4,
+      "position": [
+        256,
+        176
+      ],
+      "id": "93974923-0c56-4df6-a431-84da6f4a7982",
+      "name": "MCP Client",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SN0u34Mu73OkHLsb",
+          "name": "Bearer Auth account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        160
+      ],
+      "id": "8fee67b5-4ee7-4589-8647-4d15105e7795",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QTtgNdtuykbIgIdw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        160
+      ],
+      "id": "78681f68-712d-4068-bd2a-204a478dda81",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "QTtgNdtuykbIgIdw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d3612e89-8c0c-4cde-a1fb-ca6cd4106284",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c42dfe97eee1872ca00b19a8df822f25566004c5304641a07be06eece76cc7f"
+  },
+  "nodeGroups": [],
+  "id": "shWT79XjIJorDJ6z",
+  "tags": []
+}

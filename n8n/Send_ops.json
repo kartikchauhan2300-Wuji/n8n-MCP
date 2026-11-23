@@ -1,0 +1,279 @@
+{
+  "name": "Send_ops",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "severity"
+            },
+            {
+              "name": "message"
+            },
+            {
+              "name": "order_id"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -384,
+        -64
+      ],
+      "id": "de5fc015-459a-4445-b566-a9daf88e366a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ed3672f3-81f7-476e-86c7-cd538c7a4ada",
+              "name": "severity",
+              "value": "={{ $json.severity.trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "9b00f4d2-7cb8-451d-bd38-16852f35baef",
+              "name": "message",
+              "value": "={{ $json.message.trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "1a77d78e-76ae-4177-b138-12df6fae3ddc",
+              "name": "order_id",
+              "value": "={{ $json.order_id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -240,
+        -64
+      ],
+      "id": "1a316b67-9451-4f0c-aaeb-4d4b1c7ef21f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "7cc7f3b7-3f42-4d40-9507-a2b4a3c6ca35",
+              "leftValue": "={{['low', 'medium', 'high'].includes ($json.severity) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1f224eed-566f-448f-978d-179fe67965b8",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e4bea481-865c-484f-974c-e22f7d97501f",
+              "leftValue": "={{ $json.message.length }}",
+              "rightValue": 500,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -112,
+        -48
+      ],
+      "id": "1f328cf1-8253-43c8-8869-4c89ce919d62",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "alerts@example.com",
+        "toEmail": "ops@example.com",
+        "subject": "={{ $json.severity.toUpperCase() }} support alert {{ $json.order_id }}",
+        "emailFormat": "text",
+        "text": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        -80
+      ],
+      "id": "146526d8-80cb-4394-b16c-681177c508ba",
+      "name": "Send an Email",
+      "webhookId": "0f22475b-8519-4693-b3a7-87558b7b6494",
+      "credentials": {
+        "smtp": {
+          "id": "WHJkPKLvgD4m7k9v",
+          "name": "SMTP account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8bbbdb09-6dbd-465b-87b2-381bb7858f57",
+              "name": "error",
+              "value": "={{ $json.error }}",
+              "type": "string"
+            },
+            {
+              "id": "73d6f1ff-6153-4f86-aa7b-4a2bc2e89b25",
+              "name": "accepted",
+              "value": "={{ $json.accepted[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        256,
+        -80
+      ],
+      "id": "da227aed-0a33-49fa-9e47-90e4b4e6fb4c",
+      "name": "Email sent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cce265b1-2d3a-4050-afed-5f2f7111bd82",
+              "name": "Status",
+              "value": "Invalid input",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        64,
+        96
+      ],
+      "id": "c9b09efc-a1cc-4000-a13d-a1c1f32dd5a4",
+      "name": "Invalid input"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "severity": "high",
+          "message": "brah",
+          "order_id": 1052
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invalid input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Email sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email sent": {
+      "main": [
+        [],
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "93c8389d-f039-48e5-a8f3-afd63d2e18e3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c42dfe97eee1872ca00b19a8df822f25566004c5304641a07be06eece76cc7f"
+  },
+  "nodeGroups": [],
+  "id": "LXnN6osAIzVUF4dj",
+  "tags": []
+}

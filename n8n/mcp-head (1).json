@@ -1,0 +1,274 @@
+{
+  "name": "mcp-head",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "be850e09-cff0-4dde-8449-f3e87cb5b6f2"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a5faad41-478f-435e-ac36-f61cb09476b6",
+      "name": "MCP Server Trigger",
+      "webhookId": "be850e09-cff0-4dde-8449-f3e87cb5b6f2",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SN0u34Mu73OkHLsb",
+          "name": "Bearer Auth account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "LXnN6osAIzVUF4dj",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/LXnN6osAIzVUF4dj",
+          "cachedResultName": "Send_ops"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "severity": "={{ $fromAI('severity', `Exactly one of: Low, medium, high`, 'string') }}",
+            "message": "={{ $fromAI('message', `The alert text for operations team, under 500 characters`, 'string') }}",
+            "order_id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('order_id', `The order number for example 1042`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "severity",
+              "displayName": "severity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "order_id",
+              "displayName": "order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        128
+      ],
+      "id": "9f88bb0a-917d-490b-9aaa-5c3f011742ec",
+      "name": "Call 'Send_ops'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "a9VVYpi3FKjHEfvv",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/a9VVYpi3FKjHEfvv",
+          "cachedResultName": "create_ticket"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "order_id": "={{ $fromAI('order_id', `The order number for example 1042`, 'string') }}",
+            "Category": "={{ $fromAI('Category', `Exactly one of: Shipping, Refund, Damage, Other`, 'string') }}",
+            "Summary": "={{ $fromAI('Summary', `One or two sentences describing the issue, under 500 characters`, 'string') }}",
+            "Priority": "={{ $fromAI('Priority', `Exactly one of: Low, Medium, High`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "order_id",
+              "displayName": "order_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "b7181da6-9d97-4804-bc90-ae92a27ebaff",
+      "name": "Call 'create_ticket'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Hu0T8KpF0NDMk1f5",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Hu0T8KpF0NDMk1f5",
+          "cachedResultName": "Send_customer_email"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "to": "={{ $fromAI('to', `Customer email address, must end in @example.com`, 'string') }}",
+            "subject": "={{ $fromAI('subject', `Short email subject line, must end in under 150 characters`, 'string') }}",
+            "body": "={{ $fromAI('body', `Plain-text email body, under 2000 characters`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "to",
+              "displayName": "to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        176
+      ],
+      "id": "7a7969d8-fb56-44f9-ab01-c2f43c581719",
+      "name": "Call 'Send_customer_email'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Call 'Send_ops'": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'create_ticket'": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Send_customer_email'": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d655ad09-0b8f-404c-8a7d-16e9cc4cfa8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c42dfe97eee1872ca00b19a8df822f25566004c5304641a07be06eece76cc7f"
+  },
+  "nodeGroups": [],
+  "id": "KDUdwdwh9Nz4kn4s",
+  "tags": []
+}
